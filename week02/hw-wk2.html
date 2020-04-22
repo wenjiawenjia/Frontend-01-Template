@@ -1,0 +1,102 @@
+<input id='testNumber'></input>
+<button id='submit' onClick="testNumber()">Test Number</button>
+<button onclick="testString()">Test String</button>
+<button onclick="UTF8_Encoding()">UTF8_Encoding</button>
+
+<script>
+    // 写一个正则表达式 匹配所有 Number 直接量
+    function testNumber() {
+        var el = document.getElementById('testNumber');
+
+        //new RegExp('/^[\+\-]?\d*\.?\d+(?:[Ee][\+\-]?\d+)?$/'); //'/^[\+\-]?\d*\.?\d+(?:[Ee][\+\-]?\d+)?$/';
+        const regex = /^[\+\-]?\d*\.?\d+(?:[Ee][\+\-]?\d+)?$/;
+        const str = el.value;
+        let m;
+        console.log(el.value, m = regex.exec(str));
+
+
+        if ((m = regex.exec(str)) !== null) {
+            // // This is necessary to avoid infinite loops with zero-width matches
+            // if (m.index === regex.lastIndex) {
+            //     regex.lastIndex++;
+            // }
+
+            // The result can be accessed through the `m`-variable.
+            m.forEach((match, groupIndex) => {
+                window.alert(`Found a number,  ${match}`);
+            });
+        } else {
+            window.alert('Did not found a number');
+        }
+
+    }
+
+    // 写一个 UTF-8 Encoding 的函数
+    function UTF8_Encoding() {
+
+        // Get input from input element
+        var str = document.getElementById('testNumber').value;
+
+        const codePoint = str.codePointAt(); // decimal
+        const bi = codePoint.toString(2); // binaral
+
+        var out = '';
+        const numberOfBytes = Number(bi.length / 7);
+        var temp = '';
+
+        // fill up zeros
+        for (var i = 0; i <= (Math.ceil(numberOfBytes) * 7 - bi.length - Math.ceil(numberOfBytes)); i++) {
+            temp += '0';
+        }
+        temp += bi;
+
+        var temp2 = '';
+
+        // if input is only one byte
+        if (numberOfBytes <= 1) {
+            temp = '0' + temp;
+            return new Buffer(temp);
+        }
+
+        // fill up '1's for first byte
+        for (var j = 0; j < (Math.floor(numberOfBytes)); j++) {
+            temp2 += '1';
+        }
+
+        // fill up the zero after '1's for first byte
+        var mark1 = 7 - Math.floor(numberOfBytes);
+        temp2 = temp2 + '0' + temp.slice(0, mark1);
+
+        // split and fill for the rest of bytes/
+        for (var k = 0; k < Math.floor(numberOfBytes); k++) {
+            console.log(mark1 + 1, mark1 + 8, temp.slice(mark1 + 1, mark1 + 8));
+            temp2 += '1' + temp.slice(mark1, mark1 + 7);
+            mark1 += 7;
+        }
+
+        return new Buffer(temp2);
+    }
+
+    // 写一个正则表达式，匹配所有的字符串直接量，单引号和双引号
+    function testString() {
+        //
+        var el = document.getElementById('testNumber');
+        const regex = /^[a-zA-Z\u0027\u0022]+$/;
+        const str = el.value;
+        let m;
+
+        if ((m = regex.exec(str)) !== null) {
+            // // This is necessary to avoid infinite loops with zero-width matches
+            // if (m.index === regex.lastIndex) {
+            // regex.lastIndex++;
+            // }
+
+            // The result can be accessed through the `m`-variable.
+            m.forEach((match, groupIndex) => {
+                window.alert(`Found a string, ${match}`);
+            });
+        } else {
+            window.alert('Did notfound a string');
+        }
+    }
+</script>

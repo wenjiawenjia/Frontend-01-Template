@@ -1,0 +1,66 @@
+<button id='submit' onClick="test()">TEST</button>
+
+
+<script>
+    function test() {
+        console.log("convertStringToNumber", convertStringToNumber('10.212', 10));
+        console.log('convertNumberToString', convertNumberToString(100.99123, 10))
+    }
+
+    function convertStringToNumber(string, x) {
+        console.log("input: string x", string, x);
+        if (arguments.length < 2) {
+            x = 10;
+        }
+
+        var chars = string.split('');
+        var number = 0;
+        console.log(chars);
+
+        var i = 0;
+        while (i < string.length && chars[i] !== '.') {
+            number = number * x;
+            number += chars[i].codePointAt(0) - '0'.codePointAt(0);
+            i++
+        }
+        if (chars[i] === '.') {
+            i++;
+        }
+        var fraction = 1;
+
+        while (i < chars.length) {
+            fraction = fraction / x;
+            number += (chars[i].codePointAt(0) - '0'.codePointAt(0)) * fraction;
+            i++;
+        }
+        return number;
+
+    }
+
+    function convertNumberToString(number, x, noOfDecimals = 15) {
+        console.log("input: number x noOfDecimals", numnber, x, noOfDecimals);
+        if (arguments.length < 2) {
+            x = 10;
+        }
+        var integer = Math.floor(number);
+        var fraction = number - integer;
+        const fracCopy = number - integer;
+
+        var string = '';
+        while (integer > 0) {
+            string = String(integer % x) + string;
+            integer = Math.floor(integer / x);
+
+        }
+
+        string += '.';
+        while (fraction > Number.EPSILON && noOfDecimals > 0) {
+
+            fraction = fraction * x;
+            string += String(Math.floor(fraction));
+            noOfDecimals -= 1;
+            fraction = fraction - Math.floor(fraction);
+        }
+        return string;
+    }
+</script>
